@@ -16,6 +16,7 @@ from Utilities.ColorConsole import bcolors
     # Backward propagation
     # Update parameters
 # Predict graphics
+
 print('')
 print(bcolors.BOLD + bcolors.UNDERLINE + 'Neural network with one hidden layer and -n- units' + bcolors.ENDC)
 print(bcolors.OKGREEN + '>> Developed by Matias Vallejos <<' + bcolors.ENDC)
