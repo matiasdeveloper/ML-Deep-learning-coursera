@@ -13,26 +13,17 @@ class NeuralNetworkApp:
         self.iters_hist = []
         self.lr = 0
 
-        self.parameters = {}
-
-        np.random.seed(1)
-        
     def initialize_parameters_deep(self, layer_dims):
         # Random initialize parameters for L layers
-        np.random.seed(3)
+        np.random.seed(1)
         param = {}
         L = len(layer_dims)            # number of layers in the network
 
         for l in range(1, L):
             ### START CODE HERE ### (≈ 2 lines of code)
-            param['W' + str(l)] = np.random.randn(layer_dims[l], layer_dims[l - 1]) * 0.01
+            param['W' + str(l)] = np.random.randn(layer_dims[l], layer_dims[l - 1]) / np.sqrt (layer_dims [l-1])
             param['b' + str(l)] = np.zeros((layer_dims[l], 1))
             ### END CODE HERE ###
-            
-            assert(param['W' + str(l)].shape == (layer_dims[l], layer_dims[l-1]))
-            assert(param['b' + str(l)].shape == (layer_dims[l], 1))
-    
-        self.parameters = param
 
         return param
 
@@ -168,25 +159,26 @@ class NeuralNetworkApp:
         return param
         
     
-    def L_layer_model(self, layer_dims, lr = 0.0075, iters=3000, print_cost = False):
+    def L_layer_model(self, train_X, train_Y, layer_dims, lr = 0.0075, iters=3000, print_cost = False):
         ## L-Layers model for a NN
 
         # Step 1: Initialize randomly parameters for all layers
         np.random.seed(1)
+        costs = []
 
         self.lr = lr
-        self.initialize_parameters_deep(layer_dims)
+        parameters = self.initialize_parameters_deep(layer_dims)
 
         # Step 2: Loop (Gradient descent)
         for i in range(0, iters):
             # Forward propagation
-            AL, caches = self.linear_forward_model(self.train_X, self.parameters)
+            Al, caches = self.linear_forward_model(train_X, parameters)
             # Compute Cost
-            cost = self.compute_cost(AL, self.train_y)
+            cost = self.compute_cost(Al, train_Y)
             # Backward propagation
-            grads = self.linear_backward_model(AL, self.train_y, caches)
+            grads = self.linear_backward_model(Al, train_Y, caches)
             # Update parameters
-            self.parameters = self.update_parameters(self.parameters, grads, lr)
+            parameters = self.update_parameters(parameters, grads, lr)
 
             # Print the cost every 100 training example
             if print_cost and i % 100 == 0:
@@ -195,7 +187,8 @@ class NeuralNetworkApp:
                 self.cost_hist.append(cost)
                 self.iters_hist.append(i)
 
-        return self.parameters
+        self.parameters = parameters
+        return parameters
 
 
 
